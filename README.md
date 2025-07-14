@@ -97,7 +97,7 @@ forumhub
 👨‍💻 Autor
 Desenvolvido por Yago Carvalho
 📸 Instagram: @iyagocarvalhodev
-🔗 GitHub: github.com/seu-usuario
+🔗 GitHub: github.com/YagoACarvalho
 
 ⭐ Contribua
 Contribuições são bem-vindas! Sinta-se à vontade para abrir issues e pull requests para sugerir melhorias ou correções.
