@@ -38,4 +38,9 @@ public class RespostaService {
     }
 
 
+    public void deletar(Long id) {
+        var resposta = respostaRepository.findById(id)
+                .orElseThrow(() -> new ValidacaoException("Erro ao deletar!"));
+        respostaRepository.delete(resposta);
+    }
 }
