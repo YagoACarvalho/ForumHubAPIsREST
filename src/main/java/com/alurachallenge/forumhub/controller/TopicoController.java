@@ -70,6 +70,7 @@ public class TopicoController {
         return ResponseEntity.ok(cursosEncontrados);
     }
 
+    //JÁ REFATORADO
     //Marca o tópico como resolvido fazendo uma espécie de exclusão lógica
     @DeleteMapping("/resolved/{id}")
     @Transactional
@@ -78,10 +79,11 @@ public class TopicoController {
         return ResponseEntity.noContent().build();
     }
 
+    //JÁ REFATORADO
     @GetMapping("/{id}")
-    public ResponseEntity<?> detalharTopico(@PathVariable Long id){
-        var topicoEscolhido = topicoRepository.getReferenceById(id);
-        return ResponseEntity.ok(new TopicoResponseDTO(topicoEscolhido));
+    public ResponseEntity<TopicoResponseDTO> detalharTopico(@PathVariable Long id){
+        var topicoEscolhido = service.detalharTopico(id);
+        return ResponseEntity.ok(topicoEscolhido);
     }
 
 

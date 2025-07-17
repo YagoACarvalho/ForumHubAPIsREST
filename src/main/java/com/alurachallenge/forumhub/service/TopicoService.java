@@ -86,11 +86,19 @@ public class TopicoService {
     }
 
 
-    public TopicoResponseDTO marcarComoResolvido(Long id){
+    public TopicoResponseDTO marcarComoResolvido(Long id) {
         var topicoResolvido = procurarTopicoId(id);
          topicoResolvido.resolver();
          return new TopicoResponseDTO(topicoResolvido);
     }
+
+
+    public TopicoResponseDTO detalharTopico(Long id) {
+        var topicoEscolhido = procurarTopicoId(id);
+        return new TopicoResponseDTO(topicoEscolhido);
+    }
+
+
 
 
 
