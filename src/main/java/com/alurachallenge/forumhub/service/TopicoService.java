@@ -1,8 +1,8 @@
 package com.alurachallenge.forumhub.service;
 
 import com.alurachallenge.forumhub.dto.DadosAtualizacaoTopico;
-import com.alurachallenge.forumhub.dto.DadosPostTopico;
-import com.alurachallenge.forumhub.dto.DadosTopico;
+import com.alurachallenge.forumhub.dto.TopicoRequestDTO;
+import com.alurachallenge.forumhub.dto.TopicoResponseDTO;
 import com.alurachallenge.forumhub.entity.Topico;
 import com.alurachallenge.forumhub.entity.Usuario;
 import com.alurachallenge.forumhub.infra.error.ValidacaoException;
@@ -13,7 +13,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
-import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
 public class TopicoService {
@@ -40,32 +39,23 @@ public class TopicoService {
      *  retorna ValidacaoException se já existir um tópico igual
      */
 
-    public Topico criar(DadosPostTopico dadosPostTopico, @AuthenticationPrincipal Usuario usuarioAutenticado) {
-        if(topicoRepository.existsByTituloAndMensagem(dadosPostTopico.titulo(), dadosPostTopico.mensagem())) {
-            throw new ValidacaoException("Já existe um tópico com este título e mensagem");
-        }
-
+    public TopicoResponseDTO criarTopico(TopicoRequestDTO topicoRequestDTO, @AuthenticationPrincipal Usuario usuarioAutenticado) {
+        validarTopicoDuplicado(topicoRequestDTO);
         Usuario usuarioLogado = usuarioService.obterUsuarioAutenticado(usuarioAutenticado);
 
-        Topico topico = new Topico(
-                dadosPostTopico.titulo(),
-                dadosPostTopico.mensagem(),
-                usuarioLogado,
-                dadosPostTopico.curso());
-        topicoRepository.save(topico);
+       Topico novoTopico = construirTopico(topicoRequestDTO, usuarioLogado);
 
-        return topico;
+       Topico topicoSalvo = topicoRepository.save(novoTopico);
+
+       return new TopicoResponseDTO(topicoSalvo);
+
     }
 
 
 
 
-
     public DadosAtualizacaoTopico atualizar(Long id, DadosAtualizacaoTopico dadosAtualizacaoTopico){
-
-        if(topicoRepository.existsByTituloAndMensagem(dadosAtualizacaoTopico.titulo(), dadosAtualizacaoTopico.mensagem())) {
-            throw new ValidationException("Já existe um tópico com este título e mensagem");
-        }
+        validarTopicoDuplicado(dadosAtualizacaoTopico);
 
         var topicoEscolhido = topicoRepository.getReferenceById(dadosAtualizacaoTopico.id());
 
@@ -81,15 +71,39 @@ public class TopicoService {
      * Atenção: o mét0do findTop10ByOrderByCriacaoAsc limita sempre a 10 resultados,
      * mesmo que o parâmetro 'size' seja maior.
      */
-    public Page<DadosTopico> listar(Pageable paginacao) {
-        return topicoRepository.findTop10ByOrderByCriacaoAsc(paginacao).map(DadosTopico::new);
+    public Page<TopicoResponseDTO> listar(Pageable paginacao) {
+        return topicoRepository.findTop10ByOrderByCriacaoAsc(paginacao).map(TopicoResponseDTO::new);
     }
 
 
 
-    public Page<DadosTopico> listarPorCurso(Pageable page, String curso) {
-        Page<DadosTopico> cursosEncontrados = topicoRepository.findByCurso(curso, page).map(DadosTopico::new);
+    public Page<TopicoResponseDTO> listarPorCurso(Pageable page, String curso) {
+        Page<TopicoResponseDTO> cursosEncontrados = topicoRepository.findByCurso(curso, page).map(TopicoResponseDTO::new);
         return cursosEncontrados;
+    }
+
+
+
+
+    //Métodos auxiliares
+
+    private void validarTopicoDuplicado(TopicoRequestDTO topicoRequestDTO) {
+        boolean existe = topicoRepository.existsByTituloAndMensagem(topicoRequestDTO.titulo(), topicoRequestDTO.mensagem());
+        if (existe) {
+            throw new ValidacaoException("Já existe um tópico com esse título e mensagem. Tente novamente!");
+        }
+    }
+
+
+
+
+
+    private Topico construirTopico(TopicoRequestDTO topicoRequestDTO, Usuario usuario) {
+        return new Topico(
+                topicoRequestDTO.titulo(),
+                topicoRequestDTO.mensagem(),
+                usuario,
+                topicoRequestDTO.curso());
     }
 
 }

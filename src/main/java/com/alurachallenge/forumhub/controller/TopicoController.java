@@ -1,12 +1,13 @@
 package com.alurachallenge.forumhub.controller;
 
 import com.alurachallenge.forumhub.dto.DadosAtualizacaoTopico;
-import com.alurachallenge.forumhub.dto.DadosDetalhadoTopico;
-import com.alurachallenge.forumhub.dto.DadosPostTopico;
-import com.alurachallenge.forumhub.dto.DadosTopico;
+import com.alurachallenge.forumhub.dto.TopicoAtualizacaoRequestDTO;
+import com.alurachallenge.forumhub.dto.TopicoRequestDTO;
+import com.alurachallenge.forumhub.dto.TopicoResponseDTO;
 import com.alurachallenge.forumhub.entity.Topico;
 import com.alurachallenge.forumhub.entity.Usuario;
 import com.alurachallenge.forumhub.repository.TopicoRepository;
+import com.alurachallenge.forumhub.service.TopicoService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
@@ -32,31 +33,30 @@ public class TopicoController {
     @Autowired
     private  TopicoRepository topicoRepository;
 
+    @Autowired
+    private TopicoService service;
+
 
     @PostMapping
     @Transactional
-    public ResponseEntity postarTopico(@RequestBody @Valid DadosPostTopico dadosPostTopico, UriComponentsBuilder uriComponentsBuilder, @AuthenticationPrincipal Usuario usuarioAutenticado) {
+    public ResponseEntity<TopicoResponseDTO> postarTopico(@RequestBody @Valid TopicoRequestDTO topicoRequestDTO, UriComponentsBuilder uriComponentsBuilder, @AuthenticationPrincipal Usuario usuarioAutenticado) {
 
-        if(topicoRepository.existsByTituloAndMensagem(dadosPostTopico.titulo(), dadosPostTopico.mensagem())) {
-            throw new ValidationException("Já existe um tópico com este título e mensagem");
-        }
+        var topico = service.criarTopico(topicoRequestDTO, usuarioAutenticado);
 
-        Topico topico = new Topico(dadosPostTopico.titulo(), dadosPostTopico.mensagem(), usuarioAutenticado, dadosPostTopico.curso());
-        topicoRepository.save(topico);
-        var uri = uriComponentsBuilder.path("/topicos/{id}").buildAndExpand(topico.getId()).toUri();
-        return ResponseEntity.created(uri).body(new DadosTopico(topico));
+        var uri = uriComponentsBuilder.path("/topicos/{id}").buildAndExpand(topico.id()).toUri();
+        return ResponseEntity.created(uri).body(topico);
     }
 
 
     @GetMapping
-    public ResponseEntity<Page<DadosTopico>> listarTopico(Pageable paginacao) {
-        var page = topicoRepository.findTop10ByOrderByCriacaoAsc(paginacao).map(DadosTopico::new);
+    public ResponseEntity<Page<TopicoResponseDTO>> listarTopico(Pageable paginacao) {
+        var page = topicoRepository.findTop10ByOrderByCriacaoAsc(paginacao).map(TopicoResponseDTO::new);
         return ResponseEntity.ok(page);
     }
 
     @GetMapping("/curso/{curso}")
-    public ResponseEntity<Page<DadosTopico>> listarTopicosPorNomeCurso(@PageableDefault(size = 10, sort = "criacao", direction = Sort.Direction.DESC) Pageable paginacao, @PathVariable String curso) {
-        Page<DadosTopico> cursosEncontrados = topicoRepository.findByCurso(curso, paginacao).map(DadosTopico::new);
+    public ResponseEntity<Page<TopicoResponseDTO>> listarTopicosPorNomeCurso(@PageableDefault(size = 10, sort = "criacao", direction = Sort.Direction.DESC) Pageable paginacao, @PathVariable String curso) {
+        Page<TopicoResponseDTO> cursosEncontrados = topicoRepository.findByCurso(curso, paginacao).map(TopicoResponseDTO::new);
         return ResponseEntity.ok(cursosEncontrados);
     }
 
@@ -72,12 +72,12 @@ public class TopicoController {
     @GetMapping("/{id}")
     public ResponseEntity detalharTopico(@PathVariable Long id){
         var topicoEscolhido = topicoRepository.getReferenceById(id);
-        return ResponseEntity.ok(new DadosDetalhadoTopico(topicoEscolhido));
+        return ResponseEntity.ok(new TopicoResponseDTO(topicoEscolhido));
     }
 
     @PutMapping("/{id}")
     @Transactional
-    public ResponseEntity atualizarTopico(@PathVariable Long id,@RequestBody @Valid DadosAtualizacaoTopico dadosAtualizacaoTopico){
+    public ResponseEntity atualizarTopico(@PathVariable Long id,@RequestBody @Valid TopicoAtualizacaoRequestDTO dadosAtualizacaoTopico){
 
         if(topicoRepository.existsByTituloAndMensagem(dadosAtualizacaoTopico.titulo(), dadosAtualizacaoTopico.mensagem())) {
             throw new ValidationException("Já existe um tópico com este título e mensagem");
@@ -85,7 +85,7 @@ public class TopicoController {
 
         var topicoEscolhido = topicoRepository.getReferenceById(dadosAtualizacaoTopico.id());
         topicoEscolhido.atualizarInformacoes(dadosAtualizacaoTopico);
-        return ResponseEntity.ok(new DadosDetalhadoTopico(topicoEscolhido));
+        return ResponseEntity.ok(new TopicoResponseDTO(topicoEscolhido));
     }
     //Deleta o tópico
     @DeleteMapping("/{id}")
