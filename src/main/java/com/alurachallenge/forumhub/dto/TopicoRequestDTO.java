@@ -1,11 +1,9 @@
 package com.alurachallenge.forumhub.dto;
 
-import com.alurachallenge.forumhub.entity.Resposta;
 import com.alurachallenge.forumhub.entity.Topico;
-import com.alurachallenge.forumhub.entity.Usuario;
 import jakarta.validation.constraints.NotNull;
 
-public record DadosPostTopico(
+public record TopicoRequestDTO(
 
         @NotNull
         String titulo,
@@ -15,7 +13,7 @@ public record DadosPostTopico(
         String curso
 
 ) {
-    public DadosPostTopico (Topico topico){
+    public TopicoRequestDTO(Topico topico){
         this(topico.getTitulo(), topico.getMensagem(), topico.getCurso());
     }
 

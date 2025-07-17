@@ -3,7 +3,7 @@ package com.alurachallenge.forumhub.dto;
 import com.alurachallenge.forumhub.entity.Topico;
 import jakarta.validation.constraints.NotNull;
 
-public record DadosAtualizacaoTopico(
+public record TopicoAtualizacaoRequestDTO(
 
         @NotNull
         Long id,
@@ -15,7 +15,7 @@ public record DadosAtualizacaoTopico(
         String curso
 
 ) {
-    public DadosAtualizacaoTopico(Topico topico) {
+    public TopicoAtualizacaoRequestDTO(Topico topico) {
       this(topico.getId(), topico.getTitulo(), topico.getMensagem(), topico.getCurso());
     }
 }

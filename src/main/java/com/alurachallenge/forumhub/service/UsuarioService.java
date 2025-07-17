@@ -31,9 +31,6 @@ public class UsuarioService {
     public void deletar(Long id) {
         var usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new ValidacaoException("Usuário não encontrado"));
-        if (usuario.isAdmin()) {
-            throw new ValidacaoException("Não é permitido excluir um administrador");
-        }
 
         usuarioRepository.delete(usuario);
     }

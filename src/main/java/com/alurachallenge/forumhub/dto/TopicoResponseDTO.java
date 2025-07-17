@@ -1,15 +1,12 @@
 package com.alurachallenge.forumhub.dto;
 
 
-
-
 import com.alurachallenge.forumhub.entity.StatusTopico;
 import com.alurachallenge.forumhub.entity.Topico;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
-public record DadosTopico(
+public record TopicoResponseDTO(
 
         Long id,
         String titulo,
@@ -19,10 +16,9 @@ public record DadosTopico(
         LocalDateTime criacao,
         StatusTopico status,
         List<DadosDetalhadoResposta> respostas
+) {
 
-        ) {
-
-    public DadosTopico (Topico topico) {
+    public TopicoResponseDTO(Topico topico) {
         this(
                 topico.getId(),
                 topico.getTitulo(),
@@ -39,6 +35,7 @@ public record DadosTopico(
                                 r.getCriacao()
                         ))
                         .toList()
-                );
+        );
     }
+
 }
