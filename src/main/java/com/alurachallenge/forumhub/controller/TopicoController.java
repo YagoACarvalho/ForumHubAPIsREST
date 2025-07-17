@@ -37,6 +37,7 @@ public class TopicoController {
     private TopicoService service;
 
 
+    // JÁ REFATORADO
     @PostMapping
     @Transactional
     public ResponseEntity<TopicoResponseDTO> postarTopico(@RequestBody @Valid TopicoRequestDTO topicoRequestDTO, UriComponentsBuilder uriComponentsBuilder, @AuthenticationPrincipal Usuario usuarioAutenticado) {
@@ -47,10 +48,9 @@ public class TopicoController {
         return ResponseEntity.created(uri).body(topico);
     }
 
-
     @GetMapping
     public ResponseEntity<Page<TopicoResponseDTO>> listarTopico(Pageable paginacao) {
-        var page = topicoRepository.findTop10ByOrderByCriacaoAsc(paginacao).map(TopicoResponseDTO::new);
+        var page = service.listar(paginacao);
         return ResponseEntity.ok(page);
     }
 
@@ -75,6 +75,8 @@ public class TopicoController {
         return ResponseEntity.ok(new TopicoResponseDTO(topicoEscolhido));
     }
 
+
+    //JÁ REFATORADO
     @PutMapping("/{id}")
     @Transactional
     public ResponseEntity<TopicoResponseDTO> atualizarTopico(@PathVariable Long id,@RequestBody @Valid TopicoAtualizacaoRequestDTO dto){

@@ -74,7 +74,8 @@ public class TopicoService {
      * mesmo que o parâmetro 'size' seja maior.
      */
     public Page<TopicoResponseDTO> listar(Pageable paginacao) {
-        return topicoRepository.findTop10ByOrderByCriacaoAsc(paginacao).map(TopicoResponseDTO::new);
+        Page<Topico> topicos = buscarTop10PorOrdemDeCriacao(paginacao);
+        return topicos.map(TopicoResponseDTO::new);
     }
 
 
@@ -88,6 +89,11 @@ public class TopicoService {
 
 
     //Métodos auxiliares
+
+    private Page<Topico> buscarTop10PorOrdemDeCriacao(Pageable paginacao){
+        return topicoRepository.findTop10ByOrderByCriacaoAsc(paginacao);
+
+    }
 
     private void validarTopicoDuplicado(TopicoRequestDTO dto) {
         boolean existe = topicoRepository.existsByTituloAndMensagem(dto.titulo(), dto.mensagem());
