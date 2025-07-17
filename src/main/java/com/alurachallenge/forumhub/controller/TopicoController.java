@@ -48,41 +48,44 @@ public class TopicoController {
         return ResponseEntity.created(uri).body(topico);
     }
 
+    //JÁ REFATORADO
+    @PutMapping("/{id}")
+    @Transactional
+    public ResponseEntity<TopicoResponseDTO> atualizarTopico(@PathVariable Long id,@RequestBody @Valid TopicoAtualizacaoRequestDTO dto){
+        var topicoEscolhido = service.atualizar(dto);
+        return ResponseEntity.ok(topicoEscolhido);
+    }
+
+    //JÁ REFATORADO
     @GetMapping
     public ResponseEntity<Page<TopicoResponseDTO>> listarTopico(Pageable paginacao) {
         var page = service.listar(paginacao);
         return ResponseEntity.ok(page);
     }
 
+    //JÁ REFATORADO
     @GetMapping("/curso/{curso}")
     public ResponseEntity<Page<TopicoResponseDTO>> listarTopicosPorNomeCurso(@PageableDefault(size = 10, sort = "criacao", direction = Sort.Direction.DESC) Pageable paginacao, @PathVariable String curso) {
-        Page<TopicoResponseDTO> cursosEncontrados = topicoRepository.findByCurso(curso, paginacao).map(TopicoResponseDTO::new);
+        Page<TopicoResponseDTO> cursosEncontrados = service.listarPorCurso(paginacao, curso);
         return ResponseEntity.ok(cursosEncontrados);
     }
 
     //Marca o tópico como resolvido fazendo uma espécie de exclusão lógica
     @DeleteMapping("/resolved/{id}")
     @Transactional
-    public ResponseEntity marcarTopicoComoResolvido(@PathVariable Long id){
-        var topicoResolvido = topicoRepository.getReferenceById(id);
-        topicoResolvido.resolver();
+    public ResponseEntity<TopicoResponseDTO> marcarTopicoComoResolvido(@PathVariable Long id){
+        service.marcarComoResolvido(id);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity detalharTopico(@PathVariable Long id){
+    public ResponseEntity<?> detalharTopico(@PathVariable Long id){
         var topicoEscolhido = topicoRepository.getReferenceById(id);
         return ResponseEntity.ok(new TopicoResponseDTO(topicoEscolhido));
     }
 
 
-    //JÁ REFATORADO
-    @PutMapping("/{id}")
-    @Transactional
-    public ResponseEntity<TopicoResponseDTO> atualizarTopico(@PathVariable Long id,@RequestBody @Valid TopicoAtualizacaoRequestDTO dto){
-      var topicoEscolhido = service.atualizar(dto);
-        return ResponseEntity.ok(topicoEscolhido);
-    }
+
 
 
 

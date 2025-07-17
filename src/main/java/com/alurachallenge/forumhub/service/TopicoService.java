@@ -86,14 +86,19 @@ public class TopicoService {
     }
 
 
+    public TopicoResponseDTO marcarComoResolvido(Long id){
+        var topicoResolvido = procurarTopicoId(id);
+         topicoResolvido.resolver();
+         return new TopicoResponseDTO(topicoResolvido);
+    }
+
+
+
+
 
 
     //Métodos auxiliares
 
-    private Page<Topico> buscarTop10PorOrdemDeCriacao(Pageable paginacao){
-        return topicoRepository.findTop10ByOrderByCriacaoAsc(paginacao);
-
-    }
 
     private void validarTopicoDuplicado(TopicoRequestDTO dto) {
         boolean existe = topicoRepository.existsByTituloAndMensagem(dto.titulo(), dto.mensagem());
@@ -126,5 +131,12 @@ public class TopicoService {
                 .orElseThrow(() -> new ValidacaoException("Tópico não encontrado"));
         return topico;
     }
+
+    private Page<Topico> buscarTop10PorOrdemDeCriacao(Pageable paginacao){
+        return topicoRepository.findTop10ByOrderByCriacaoAsc(paginacao);
+
+    }
+
+
 
 }
