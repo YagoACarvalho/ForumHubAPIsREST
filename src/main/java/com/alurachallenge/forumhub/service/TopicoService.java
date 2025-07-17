@@ -1,7 +1,6 @@
 package com.alurachallenge.forumhub.service;
 
 
-import com.alurachallenge.forumhub.dto.DadosDetalhadoResposta;
 import com.alurachallenge.forumhub.dto.TopicoAtualizacaoRequestDTO;
 import com.alurachallenge.forumhub.dto.TopicoRequestDTO;
 import com.alurachallenge.forumhub.dto.TopicoResponseDTO;
@@ -9,7 +8,7 @@ import com.alurachallenge.forumhub.entity.Topico;
 import com.alurachallenge.forumhub.entity.Usuario;
 import com.alurachallenge.forumhub.infra.error.ValidacaoException;
 import com.alurachallenge.forumhub.repository.TopicoRepository;
-import jakarta.validation.ValidationException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -98,6 +97,13 @@ public class TopicoService {
         return new TopicoResponseDTO(topicoEscolhido);
     }
 
+
+    public void deletarTopico(Long id) {
+        Topico topico = topicoRepository.findById(id)
+                .orElseThrow(() -> new ValidacaoException("Tópico não encontrado"));
+
+        topicoRepository.delete(topico);
+    }
 
 
 

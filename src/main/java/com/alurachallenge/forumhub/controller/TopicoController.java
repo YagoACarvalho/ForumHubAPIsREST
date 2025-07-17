@@ -4,13 +4,14 @@ package com.alurachallenge.forumhub.controller;
 import com.alurachallenge.forumhub.dto.TopicoAtualizacaoRequestDTO;
 import com.alurachallenge.forumhub.dto.TopicoRequestDTO;
 import com.alurachallenge.forumhub.dto.TopicoResponseDTO;
-import com.alurachallenge.forumhub.entity.Topico;
 import com.alurachallenge.forumhub.entity.Usuario;
 import com.alurachallenge.forumhub.repository.TopicoRepository;
 import com.alurachallenge.forumhub.service.TopicoService;
+
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
 import jakarta.validation.Valid;
-import jakarta.validation.ValidationException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.Optional;
+
 
 @RestController
 @RequestMapping("/topicos")
@@ -88,18 +89,13 @@ public class TopicoController {
 
 
 
-
-
-
+    //JÁ REFATORADO
     //Deleta o tópico
     @DeleteMapping("/{id}")
     @Transactional
-    public ResponseEntity deletarTopico(@PathVariable Long id){
-        Optional<Topico> topicoEscolhido = Optional.of(topicoRepository.getReferenceById(id));
-        if (topicoEscolhido.isPresent()){
-            topicoRepository.deleteById(id);
-        }
-        return  ResponseEntity.noContent().build();
+    public ResponseEntity<?> deletarTopico(@PathVariable Long id){
+     service.deletarTopico(id);
+     return  ResponseEntity.noContent().build();
     }
 
 
