@@ -1,6 +1,8 @@
 package com.alurachallenge.forumhub.service;
 
-import com.alurachallenge.forumhub.dto.DadosAtualizacaoTopico;
+
+import com.alurachallenge.forumhub.dto.DadosDetalhadoResposta;
+import com.alurachallenge.forumhub.dto.TopicoAtualizacaoRequestDTO;
 import com.alurachallenge.forumhub.dto.TopicoRequestDTO;
 import com.alurachallenge.forumhub.dto.TopicoResponseDTO;
 import com.alurachallenge.forumhub.entity.Topico;
@@ -54,14 +56,14 @@ public class TopicoService {
 
 
 
-    public DadosAtualizacaoTopico atualizar(Long id, DadosAtualizacaoTopico dadosAtualizacaoTopico){
-        validarTopicoDuplicado(dadosAtualizacaoTopico);
+    public TopicoResponseDTO atualizar(TopicoAtualizacaoRequestDTO dto){
+        validarTopicoDuplicadoNoAtualizar(dto);
 
-        var topicoEscolhido = topicoRepository.getReferenceById(dadosAtualizacaoTopico.id());
+       Topico topicoEscolhido = procurarTopicoId(dto.id());
 
-        topicoEscolhido.atualizarInformacoes(dadosAtualizacaoTopico);
+        topicoEscolhido.atualizarInformacoes(dto);
 
-        return new DadosAtualizacaoTopico(topicoEscolhido);
+        return new TopicoResponseDTO(topicoEscolhido);
     }
 
 
@@ -87,8 +89,16 @@ public class TopicoService {
 
     //Métodos auxiliares
 
-    private void validarTopicoDuplicado(TopicoRequestDTO topicoRequestDTO) {
-        boolean existe = topicoRepository.existsByTituloAndMensagem(topicoRequestDTO.titulo(), topicoRequestDTO.mensagem());
+    private void validarTopicoDuplicado(TopicoRequestDTO dto) {
+        boolean existe = topicoRepository.existsByTituloAndMensagem(dto.titulo(), dto.mensagem());
+        if (existe) {
+            throw new ValidacaoException("Já existe um tópico com esse título e mensagem. Tente novamente!");
+        }
+    }
+
+
+    private void validarTopicoDuplicadoNoAtualizar(TopicoAtualizacaoRequestDTO dto) {
+        boolean existe = topicoRepository.existsByTituloAndMensagem(dto.titulo(), dto.mensagem());
         if (existe) {
             throw new ValidacaoException("Já existe um tópico com esse título e mensagem. Tente novamente!");
         }
@@ -97,13 +107,18 @@ public class TopicoService {
 
 
 
-
-    private Topico construirTopico(TopicoRequestDTO topicoRequestDTO, Usuario usuario) {
+    private Topico construirTopico(TopicoRequestDTO dto, Usuario usuario) {
         return new Topico(
-                topicoRequestDTO.titulo(),
-                topicoRequestDTO.mensagem(),
+                dto.titulo(),
+                dto.mensagem(),
                 usuario,
-                topicoRequestDTO.curso());
+                dto.curso());
+    }
+
+    private Topico procurarTopicoId(Long id) {
+        Topico topico = topicoRepository.findById(id)
+                .orElseThrow(() -> new ValidacaoException("Tópico não encontrado"));
+        return topico;
     }
 
 }

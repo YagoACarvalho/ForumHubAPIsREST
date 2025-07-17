@@ -1,6 +1,7 @@
 package com.alurachallenge.forumhub.entity;
 
-import com.alurachallenge.forumhub.dto.DadosAtualizacaoTopico;
+
+import com.alurachallenge.forumhub.dto.TopicoAtualizacaoRequestDTO;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
@@ -72,17 +73,17 @@ public class Topico {
     }
 
 
-    public void atualizarInformacoes(@Valid DadosAtualizacaoTopico dadosAtualizacaoTopico) {
-        if(dadosAtualizacaoTopico.titulo() != null){
-            this.titulo = dadosAtualizacaoTopico.titulo();
+    public void atualizarInformacoes(@Valid TopicoAtualizacaoRequestDTO dto) {
+        if(dto.titulo() != null){
+            this.titulo = dto.titulo();
         }
 
-        if (dadosAtualizacaoTopico.mensagem() != null) {
-            this.mensagem = dadosAtualizacaoTopico.mensagem();
+        if (dto.mensagem() != null) {
+            this.mensagem = dto.mensagem();
         }
 
-        if (dadosAtualizacaoTopico.curso() != null){
-            this.curso = dadosAtualizacaoTopico.curso();
+        if (dto.curso() != null){
+            this.curso = dto.curso();
         }
 
     }

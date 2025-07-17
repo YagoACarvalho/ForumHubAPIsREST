@@ -1,6 +1,6 @@
 package com.alurachallenge.forumhub.controller;
 
-import com.alurachallenge.forumhub.dto.DadosAtualizacaoTopico;
+
 import com.alurachallenge.forumhub.dto.TopicoAtualizacaoRequestDTO;
 import com.alurachallenge.forumhub.dto.TopicoRequestDTO;
 import com.alurachallenge.forumhub.dto.TopicoResponseDTO;
@@ -77,16 +77,13 @@ public class TopicoController {
 
     @PutMapping("/{id}")
     @Transactional
-    public ResponseEntity atualizarTopico(@PathVariable Long id,@RequestBody @Valid TopicoAtualizacaoRequestDTO dadosAtualizacaoTopico){
-
-        if(topicoRepository.existsByTituloAndMensagem(dadosAtualizacaoTopico.titulo(), dadosAtualizacaoTopico.mensagem())) {
-            throw new ValidationException("Já existe um tópico com este título e mensagem");
-        }
-
-        var topicoEscolhido = topicoRepository.getReferenceById(dadosAtualizacaoTopico.id());
-        topicoEscolhido.atualizarInformacoes(dadosAtualizacaoTopico);
-        return ResponseEntity.ok(new TopicoResponseDTO(topicoEscolhido));
+    public ResponseEntity<TopicoResponseDTO> atualizarTopico(@PathVariable Long id,@RequestBody @Valid TopicoAtualizacaoRequestDTO dto){
+      var topicoEscolhido = service.atualizar(dto);
+        return ResponseEntity.ok(topicoEscolhido);
     }
+
+
+
     //Deleta o tópico
     @DeleteMapping("/{id}")
     @Transactional
