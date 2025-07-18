@@ -41,7 +41,7 @@ public class SecurityConfigurations {
                                 "/error"
                         ).permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/usuarios/cadastrar").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/usuarios/cadastrarUsuario").permitAll()
                         .requestMatchers(HttpMethod.POST,"/topicos").authenticated()
                         .requestMatchers(HttpMethod.POST, "/respostas").authenticated()
                         .anyRequest().authenticated())

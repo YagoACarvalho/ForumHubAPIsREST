@@ -1,12 +1,10 @@
 package com.alurachallenge.forumhub.controller;
 
 
-import com.alurachallenge.forumhub.dto.AtualizarUsuarioDTO;
-import com.alurachallenge.forumhub.dto.DadosDetalhadosUsuario;
-import com.alurachallenge.forumhub.dto.ListaDeUsuariosDTO;
-import com.alurachallenge.forumhub.dto.UsuarioLoginDTO;
+import com.alurachallenge.forumhub.dto.*;
 import com.alurachallenge.forumhub.entity.Usuario;
 import com.alurachallenge.forumhub.repository.UsuarioRepository;
+import com.alurachallenge.forumhub.service.UsuarioService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
 @RequestMapping("/usuarios")
@@ -26,17 +25,25 @@ public class UsuarioController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private UsuarioService service;
 
-    @PostMapping("/cadastrar")
+
+    @PostMapping("/cadastrarUsuario")
     @Transactional
-    public ResponseEntity<?> cadastrarUsuario(@RequestBody UsuarioLoginDTO dto) {
-        Usuario usuario = new Usuario();
-        usuario.setUsername(dto.username());
-        usuario.setSenha(passwordEncoder.encode(dto.senha()));
-        usuario.setIdAlternativo();
-        System.out.println(usuario.getIdAlternativo());
-        usuarioRepository.save(usuario);
-        return ResponseEntity.ok("Usuario cadastrado com sucesso!");
+    public ResponseEntity<UsuarioResponseDTO> cadastrarUsuario(@RequestBody UsuarioRequestDTO dto, UriComponentsBuilder uriComponentsBuilder) {
+       var usuario = service.cadastrarUsuario(dto);
+
+       var uri = uriComponentsBuilder.path("/usuarios/{id}").buildAndExpand(usuario.id()).toUri();
+        return ResponseEntity.created(uri).body(usuario);
+    }
+
+    @DeleteMapping("/{id}")
+    @Transactional
+    @SecurityRequirement(name = "bearer-key")
+    public ResponseEntity<?> deletarUsuario(@PathVariable Long id) {
+        service.deletar(id);
+        return ResponseEntity.noContent().build();
     }
 
 
@@ -57,16 +64,6 @@ public class UsuarioController {
       return ResponseEntity.ok(page);
     }
 
-
-    @DeleteMapping("/{id}")
-    @Transactional
-    @SecurityRequirement(name = "bearer-key")
-    public ResponseEntity deletarUsuario(@PathVariable Long id) {
-        var usuario = usuarioRepository.getReferenceById(id);
-        usuarioRepository.delete(usuario);
-
-        return ResponseEntity.noContent().build();
-    }
 
 
 
