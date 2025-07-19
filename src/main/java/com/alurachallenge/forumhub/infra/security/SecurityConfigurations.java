@@ -41,9 +41,9 @@ public class SecurityConfigurations {
                                 "/error"
                         ).permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/usuarios/cadastrarUsuario").permitAll()
-                        .requestMatchers(HttpMethod.POST,"/topicos").authenticated()
-                        .requestMatchers(HttpMethod.POST, "/respostas").authenticated()
+                        .requestMatchers( "/usuarios/cadastrar").permitAll()
+                        .requestMatchers("/topicos").authenticated()
+                        .requestMatchers( "/respostas").authenticated()
                         .anyRequest().authenticated())
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
         return httpSecurity.build();

@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
 
-import java.util.Optional;
 
 
 @RestController
@@ -39,12 +38,10 @@ public class RespostaController {
 
        String username = authentication.getName();
 
-       Optional<Usuario> autor = usuarioRepository.findByUsername(username);
-       Usuario user = autor.orElseThrow(() -> new ValidacaoException("Usuário não encontrado"));
-
-
-        var dto = respostaService.criar(idTopico,user , dadosRespostaEnvio.mensagem());
-        return ResponseEntity.ok(dto);
+      var autor = usuarioRepository.findByUsername(username)
+              .orElseThrow(() -> new ValidacaoException("Erro ao carregar usuário"));
+      var dto = respostaService.criar(idTopico,autor , dadosRespostaEnvio.mensagem());
+      return ResponseEntity.ok(dto);
     }
 
     @DeleteMapping("/{id}")

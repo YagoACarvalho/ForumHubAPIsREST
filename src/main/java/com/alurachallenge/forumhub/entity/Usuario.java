@@ -1,8 +1,8 @@
 package com.alurachallenge.forumhub.entity;
 
-import com.alurachallenge.forumhub.dto.AtualizarUsuarioDTO;
+
+import com.alurachallenge.forumhub.dto.AtualizarUsuarioRequestDTO;
 import jakarta.persistence.*;
-import jakarta.validation.Valid;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -11,7 +11,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 
 
@@ -53,7 +52,7 @@ public class Usuario implements UserDetails {
         return username;
     }
 
-    public void atualizarUsuario(@Valid AtualizarUsuarioDTO dto) {
+    public void atualizarUsuario(AtualizarUsuarioRequestDTO dto) {
         if(dto.username() != null) {
             this.username = dto.username();
         }

@@ -1,7 +1,7 @@
 package com.alurachallenge.forumhub.controller;
 
 
-import com.alurachallenge.forumhub.dto.DadosAutenticacao;
+import com.alurachallenge.forumhub.dto.AutenticacaoRequestDTO;
 import com.alurachallenge.forumhub.dto.DadosTokenJWT;
 import com.alurachallenge.forumhub.entity.Usuario;
 import com.alurachallenge.forumhub.service.TokenService;
@@ -27,8 +27,8 @@ public class AutenticacaoController {
 
 
     @PostMapping
-    public ResponseEntity<DadosTokenJWT> efetuarLogin(@RequestBody @Valid DadosAutenticacao dadosAutenticacao) {
-        var authenticationToken = new UsernamePasswordAuthenticationToken(dadosAutenticacao.username(), dadosAutenticacao.senha());
+    public ResponseEntity<DadosTokenJWT> efetuarLogin(@RequestBody @Valid AutenticacaoRequestDTO autenticacaoRequestDTO) {
+        var authenticationToken = new UsernamePasswordAuthenticationToken(autenticacaoRequestDTO.username(), autenticacaoRequestDTO.senha());
         var authentication = authenticationManager.authenticate(authenticationToken);
 
         var tokenJWT = tokenService.gerarToken((Usuario) authentication.getPrincipal());

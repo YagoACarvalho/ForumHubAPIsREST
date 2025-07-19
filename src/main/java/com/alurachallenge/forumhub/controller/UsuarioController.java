@@ -29,7 +29,7 @@ public class UsuarioController {
     private UsuarioService service;
 
 
-    @PostMapping("/cadastrarUsuario")
+    @PostMapping("/cadastrar")
     @Transactional
     public ResponseEntity<UsuarioResponseDTO> cadastrarUsuario(@RequestBody UsuarioRequestDTO dto, UriComponentsBuilder uriComponentsBuilder) {
        var usuario = service.cadastrarUsuario(dto);
@@ -51,16 +51,15 @@ public class UsuarioController {
     @PutMapping("/{id}")
     @Transactional
     @SecurityRequirement(name = "bearer-key")
-    public ResponseEntity atualizarUsuario(@RequestBody AtualizarUsuarioDTO dto){
-        var usuario = usuarioRepository.getReferenceById(dto.id());
-        usuario.atualizarUsuario(dto);
-        return ResponseEntity.ok(new DadosDetalhadosUsuario(usuario));
+    public ResponseEntity<UsuarioResponseDTO>  atualizarUsuario(@PathVariable Long id, @RequestBody AtualizarUsuarioRequestDTO dto){
+        var usuario = service.atualizar(id, dto);
+        return ResponseEntity.ok(usuario);
     }
 
     @GetMapping
     @SecurityRequirement(name = "bearer-key")
-    public ResponseEntity<Page<Usuario>> ListarUsuarios(Pageable paginacao, @RequestBody ListaDeUsuariosDTO listaDeUsuariosDTO){
-      var page = usuarioRepository.findAll(paginacao);
+    public ResponseEntity<Page<UsuarioResponseDTO>> listarUsuarios(Pageable paginacao){
+      var page = service.listarUsuario(paginacao);
       return ResponseEntity.ok(page);
     }
 

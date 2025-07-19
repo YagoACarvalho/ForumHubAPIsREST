@@ -2,7 +2,7 @@ package com.alurachallenge.forumhub.dto;
 
 import jakarta.validation.constraints.NotNull;
 
-public record AtualizarUsuarioDTO(
+public record AtualizarUsuarioRequestDTO(
 
         @NotNull
         Long id,
