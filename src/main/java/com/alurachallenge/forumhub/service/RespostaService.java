@@ -1,6 +1,7 @@
 package com.alurachallenge.forumhub.service;
 
-import com.alurachallenge.forumhub.dto.DadosDetalhadoResposta;
+
+import com.alurachallenge.forumhub.dto.RespostaResponseDTO;
 import com.alurachallenge.forumhub.entity.Resposta;
 import com.alurachallenge.forumhub.entity.Topico;
 import com.alurachallenge.forumhub.entity.Usuario;
@@ -20,7 +21,7 @@ public class RespostaService {
     private RespostaRepository respostaRepository;
 
     @Transactional
-    public DadosDetalhadoResposta criar(Long topicoId, Usuario autor, String mensagem ) {
+    public RespostaResponseDTO criar(Long topicoId, Usuario autor, String mensagem ) {
         Topico topico = topicoRepository.findById(topicoId)
                 .orElseThrow(() -> new ValidacaoException("tópico não encontrado"));
 
@@ -28,7 +29,7 @@ public class RespostaService {
         Resposta resposta = new Resposta(autor, mensagem, topico);
         respostaRepository.save(resposta);
 
-        return new DadosDetalhadoResposta(
+        return new RespostaResponseDTO(
                 resposta.getId(),
                 resposta.getMensagem(),
                autor.getUsername(),

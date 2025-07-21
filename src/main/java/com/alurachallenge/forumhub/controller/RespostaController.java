@@ -1,9 +1,8 @@
 package com.alurachallenge.forumhub.controller;
 
 
-import com.alurachallenge.forumhub.dto.DadosDetalhadoResposta;
-import com.alurachallenge.forumhub.dto.DadosRespostaEnvio;
-import com.alurachallenge.forumhub.entity.Usuario;
+import com.alurachallenge.forumhub.dto.RespostaRequestDTO;
+import com.alurachallenge.forumhub.dto.RespostaResponseDTO;
 import com.alurachallenge.forumhub.infra.error.ValidacaoException;
 import com.alurachallenge.forumhub.repository.RespostaRepository;
 import com.alurachallenge.forumhub.repository.UsuarioRepository;
@@ -34,23 +33,20 @@ public class RespostaController {
 
     @PostMapping
     @Transactional
-    public ResponseEntity<DadosDetalhadoResposta> responderTopico(@PathVariable Long idTopico, @RequestBody @Valid DadosRespostaEnvio dadosRespostaEnvio, Authentication authentication){
+    public ResponseEntity<RespostaResponseDTO> responderTopico(@PathVariable Long idTopico, @RequestBody @Valid RespostaRequestDTO respostaRequestDTO, Authentication authentication){
 
        String username = authentication.getName();
 
       var autor = usuarioRepository.findByUsername(username)
               .orElseThrow(() -> new ValidacaoException("Erro ao carregar usuário"));
-      var dto = respostaService.criar(idTopico,autor , dadosRespostaEnvio.mensagem());
+      var dto = respostaService.criar(idTopico,autor , respostaRequestDTO.mensagem() );
       return ResponseEntity.ok(dto);
     }
 
     @DeleteMapping("/{id}")
     @Transactional
     public ResponseEntity deletarResposta(@PathVariable Long id) {
-
-        var resposta = respostaRepository.getReferenceById(id);
-        respostaRepository.delete(resposta);
-
+        respostaService.deletar(id);
         return ResponseEntity.noContent().build();
     }
 
