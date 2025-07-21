@@ -12,6 +12,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -76,7 +78,40 @@ class UsuarioServiceTest {
 
 
     @Test
-    void deletar() {
+    void deveDeletarUsuarioQuandoIdExistir() {
+        //Arrange
+        Long id = 1L;
+        Usuario usuario = new Usuario();
+        usuario.setId(id);
+        usuario.setUsername("User");
+        usuario.setSenha("123456");
+        usuario.setCurso("Java");
+
+        when(usuarioRepository.findById(id)).thenReturn(Optional.of(usuario));
+
+        //Act
+        usuarioService.deletar(id);
+
+        //Assert
+        verify(usuarioRepository).delete(usuario);
+
+    }
+
+    @Test
+    void deveLancarQuandoIdNaoExistir() {
+
+        Long idInexistente = 99L;
+
+        //Simula que o usuário não existe no banco
+        when(usuarioRepository.findById(idInexistente)).thenReturn(Optional.empty());
+
+        //act e assert
+        ValidacaoException exception = assertThrows(ValidacaoException.class, () -> {
+            usuarioService.deletar(idInexistente);
+        });
+
+        assertEquals("Usuário não encontrado!", exception.getMessage());
+
     }
 
     @Test
