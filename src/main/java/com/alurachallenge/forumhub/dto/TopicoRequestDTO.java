@@ -5,11 +5,11 @@ import jakarta.validation.constraints.NotNull;
 
 public record TopicoRequestDTO(
 
-        @NotNull
+        @NotNull(message = "Titulo é obrigatório")
         String titulo,
-        @NotNull
+        @NotNull(message = "Mensagem é obrigatória")
         String mensagem,
-        @NotNull
+        @NotNull(message = "Curso é obrigatório")
         String curso
 
 ) {

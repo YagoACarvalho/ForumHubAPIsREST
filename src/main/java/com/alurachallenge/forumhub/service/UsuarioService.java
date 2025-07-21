@@ -13,7 +13,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 
 @Service
 public class UsuarioService {
@@ -43,6 +42,11 @@ public class UsuarioService {
 
     public UsuarioResponseDTO atualizar(Long id, AtualizarUsuarioRequestDTO dto){
         var usuario = procurarUsuarioId(id);
+
+        if (!usuario.getUsername().equals(dto.username()) &&
+                usuarioRepository.existsByUsername(dto.username())) {
+            throw new ValidacaoException("Já existe outro usuário com esse username.");
+        }
 
        usuario.atualizarUsuario(dto);
         return new UsuarioResponseDTO(usuario);

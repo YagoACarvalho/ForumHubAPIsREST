@@ -4,11 +4,11 @@ import jakarta.validation.constraints.NotNull;
 
 public record UsuarioRequestDTO(
 
-        @NotNull
+        @NotNull(message = "Username é obrigatório")
         String username,
-        @NotNull
+        @NotNull(message = "Senha é obrigatória")
         String senha,
-        @NotNull
+        @NotNull(message = "Curso é obrigatório")
         String curso
 ) {
 }
