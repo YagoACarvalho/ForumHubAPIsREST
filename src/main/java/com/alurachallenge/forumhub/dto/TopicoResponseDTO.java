@@ -15,7 +15,7 @@ public record TopicoResponseDTO(
         String curso,
         LocalDateTime criacao,
         StatusTopico status,
-        List<DadosDetalhadoResposta> respostas
+        List<RespostaResponseDTO> respostas
 ) {
 
     public TopicoResponseDTO(Topico topico) {
@@ -28,7 +28,7 @@ public record TopicoResponseDTO(
                 topico.getCriacao(),
                 topico.getStatus(),
                 topico.getResposta().stream()
-                        .map(r -> new DadosDetalhadoResposta(
+                        .map(r -> new RespostaResponseDTO(
                                 r.getId(),
                                 r.getMensagem(),
                                 r.getAutor().getUsername(),
